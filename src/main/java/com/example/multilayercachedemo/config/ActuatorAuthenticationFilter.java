@@ -22,7 +22,7 @@ public class ActuatorAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request)
     {
-        return !request.getRequestURI().startsWith("/actuator");
+        return !getRelativePath(request).startsWith("/actuator");
     }
 
     @Override
@@ -56,5 +56,12 @@ public class ActuatorAuthenticationFilter extends OncePerRequestFilter {
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    private String getRelativePath(HttpServletRequest request) {
+        if (request.getPathInfo() != null) {
+            return request.getPathInfo();
+        }
+        return request.getServletPath();
     }
 }
